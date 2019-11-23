@@ -112,13 +112,12 @@ int main() {
 
           // Push the current estimated x,y positon from the Kalman filter's 
           //   state vector
-
           VectorXd estimate(4);
-
-          double p_x = fusionEKF.ekf_.x_(0);
-          double p_y = fusionEKF.ekf_.x_(1);
-          double v1  = fusionEKF.ekf_.x_(2);
-          double v2 = fusionEKF.ekf_.x_(3);
+          VectorXd x = fusionEKF.ekf_.GetX();
+          double p_x = x(0);
+          double p_y = x(1);
+          double v1  = x(2);
+          double v2 = x(3);
 
           estimate(0) = p_x;
           estimate(1) = p_y;
@@ -137,7 +136,7 @@ int main() {
           msgJson["rmse_vx"] = RMSE(2);
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-          // std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
         }  // end "telemetry" if
