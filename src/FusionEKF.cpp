@@ -35,8 +35,12 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0,
           0, 1, 0, 0;
   Q_ = Eigen::MatrixXd(4, 4);
+  Q_.setIdentity();
   F_= Eigen::MatrixXd(4, 4);
   F_.setIdentity();
+
+  ekf_.Init(num_states_to_estimate);
+
 }
 
 /**
@@ -82,14 +86,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     // first measurement
     cout << "EKF: " << endl;
     VectorXd x = VectorXd(num_states_to_estimate);
-    x.setOnes();
-    ekf_.Init(num_states_to_estimate);
+    x.setZero();
+    std::cout<<measurement_pack.raw_measurements_<<std::endl;
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
       double angle = measurement_pack.raw_measurements_[1];
       double dist = measurement_pack.raw_measurements_[0];
-      x(0) = sin(angle) * dist;
-      x(1) = cos(angle) * dist;
+      x(0) = cos(angle) * dist;
+      x(1) = sin(angle) * dist;
+
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER)
     {
@@ -103,7 +108,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     return;
   }
 
-  double elapsed_time = (previous_timestamp_ - measurement_pack.timestamp_) / 1000000.0;
+  double elapsed_time = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
   previous_timestamp_ = measurement_pack.timestamp_;
 
 

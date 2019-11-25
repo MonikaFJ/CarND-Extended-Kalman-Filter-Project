@@ -26,12 +26,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   }
   for (int j = 0; j<variables_len;j++)
   {
-    res[j] = sqrt(res[j])/est_len;
+    res[j] = sqrt(res[j]/est_len);
   }
 
-  /**
-   * TODO: Calculate the RMSE here.
-   */
    return res;
 }
 
